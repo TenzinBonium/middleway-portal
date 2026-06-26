@@ -21,6 +21,7 @@ export default function AdminPanel({ events, setEvents, onEventAdded, onEventUpd
   const [imagePreview, setImagePreview] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
+  const [activeTab, setActiveTab] = useState('form');
 
   // Load event details into form when editing
   const handleEditSelect = (event) => {
@@ -37,6 +38,7 @@ export default function AdminPanel({ events, setEvents, onEventAdded, onEventUpd
     setImagePreview(event.imageUrl || '');
     setImageFile(null);
     setMessage({ text: 'Loaded event for editing.', type: 'info' });
+    setActiveTab('form');
   };
 
   // Reset form inputs
@@ -122,6 +124,7 @@ export default function AdminPanel({ events, setEvents, onEventAdded, onEventUpd
         setMessage({ text: 'Event created successfully!', type: 'success' });
       }
       resetForm();
+      setActiveTab('list');
     } catch (err) {
       console.error(err);
       setMessage({ text: `Failed to save event: ${err.message}`, type: 'danger' });
@@ -150,7 +153,26 @@ export default function AdminPanel({ events, setEvents, onEventAdded, onEventUpd
 
   return (
     <div className="container">
-      <div className="dashboard-grid">
+      
+      {/* Mobile Admin Navigation Tabs */}
+      <div className="dashboard-tabs">
+        <button 
+          type="button"
+          className={`dashboard-tab-btn ${activeTab === 'form' ? 'active' : ''}`}
+          onClick={() => setActiveTab('form')}
+        >
+          {id ? '📝 Edit Event' : '📝 Create Event'}
+        </button>
+        <button 
+          type="button"
+          className={`dashboard-tab-btn ${activeTab === 'list' ? 'active' : ''}`}
+          onClick={() => setActiveTab('list')}
+        >
+          📋 Manage Events
+        </button>
+      </div>
+
+      <div className={`dashboard-grid show-${activeTab}`}>
         {/* Form Panel */}
         <div className="admin-form-card glass-panel">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
